@@ -7,7 +7,7 @@
 ![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-scheduled-2088FF?logo=githubactions&logoColor=white)
 
 A small automation that checks job boards for **fresh QA vacancies** and sends a digest to Telegram —
-each vacancy only once.
+each vacancy only once. Built for my own job search and in use since March 2026.
 
 Job boards change their HTML all the time, so instead of brittle CSS selectors the page is converted to
 plain text and an LLM extracts the vacancies as **structured JSON**. Everything around the model is
