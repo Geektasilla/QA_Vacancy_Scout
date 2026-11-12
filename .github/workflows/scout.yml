@@ -1,0 +1,55 @@
+name: Vacancy Scout
+
+on:
+  workflow_dispatch:
+  # Uncomment to receive the digest every weekday at 08:00 Berlin time
+  # schedule:
+  #   - cron: "0 7 * * 1-5"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vacancy-scout
+  cancel-in-progress: false
+
+jobs:
+  scout:
+    # Runs only in the original repository: forks never execute the paid OpenAI calls.
+    if: github.repository == 'Geektasilla/QA_Vacancy_Scout'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # The list of already delivered vacancies lives in the Actions cache,
+      # so the repository history stays clean and no job data is committed.
+      - name: Restore seen vacancies
+        uses: actions/cache/restore@v4
+        with:
+          path: state
+          key: seen-vacancies-${{ github.run_id }}
+          restore-keys: seen-vacancies-
+
+      - name: Run scout
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python -m vacancy_scout
+
+      - name: Save seen vacancies
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: state
+          key: seen-vacancies-${{ github.run_id }}

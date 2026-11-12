@@ -1,0 +1,16 @@
+[project]
+name = "qa-vacancy-scout"
+version = "1.0.0"
+description = "Daily Telegram digest of fresh QA job postings, extracted from job boards with an LLM"
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 130
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
